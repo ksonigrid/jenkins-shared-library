@@ -1,12 +1,12 @@
 #!/usr/bin/env groovy
 
-def call() {
+def call(String imageName) {
     echo "building images"
     withCredentials([usernamePassword(credentialsId: "dockerhub-credential", passwordVariable: 'PASS', usernameVariable: 'USER')]) {
         sh """
-            docker build . -t ksonigrid/java-mavenrepo:2.0
+            docker build . -t $imageName
             echo ${PASS} | docker login -u ${USER} --password-stdin
-            docker push ksonigrid/java-mavenrepo:2.0
+            docker push $imageName
         """
     }
 }
