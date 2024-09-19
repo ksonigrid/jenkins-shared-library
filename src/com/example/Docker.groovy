@@ -3,6 +3,7 @@
 package com.example
 
 class Docker implements Serializable {
+
     def script
 
     // importing all the jenkins syntax like sh, withCredentials etc.
@@ -11,13 +12,18 @@ class Docker implements Serializable {
     }
 
     def buildDockerImage(String imageName){
-        script.echo "building images"
+            script.sh "docker build . -t $imageName"
+    }
+
+    def dockerLogin(){
         script.withCredentials([script.usernamePassword(credentialsId: "dockerhub-credential", passwordVariable: 'PASS', usernameVariable: 'USER')]) {
             script.sh """
-            docker build . -t $imageName
             echo $script.PASS | docker login -u $script.USER --password-stdin
-            docker push $imageName
         """
         }
+    }
+
+    def dockerPush(String imageName){
+        script.sh "docker push $imageName"
     }
 }
